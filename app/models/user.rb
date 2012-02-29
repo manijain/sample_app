@@ -7,17 +7,16 @@
 #  email      :string(255)
 #  created_at :datetime        not null
 #  updated_at :datetime        not null
-#
 
 class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation
   has_secure_password
+  has_many :microposts, dependent: :destroy
   before_save :create_remember_token
-
   validates :name, presence: true, length: {maximum: 50}
   valid_email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, format: { with: valid_email_regex },
-  uniqueness: { case_sensitive: false}
+    uniqueness: { case_sensitive: false}
   validates :password, length: {minimum: 6}
 
   def self.authenticate(email, submitted_password)
@@ -29,6 +28,10 @@ class User < ActiveRecord::Base
   def self.authenticate_with_salt(id, cookie_salt)
     user = find_by_id(id)
     (user && user.salt == cookie_salt) ? user : nil
+  end
+
+  def feed
+     Micropost.where("user_id = ?", id)
   end
 
   private

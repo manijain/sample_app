@@ -17,12 +17,20 @@ module SessionsHelper
     @current_user ||= user_from_remember_token
   end
 
+  
   def sign_out
     cookies.delete(:remember_token)
   end
 
   def current_user?(user)
     user == current_user
+  end
+
+  def signed_in_user
+    unless signed_in?
+      store_location
+      redirect_to signin_path, notice: "Please sign in."
+    end
   end
 
   def redirect_back_or(default)
@@ -34,16 +42,15 @@ module SessionsHelper
     session[:return_to] = request.fullpath
   end
 
-
   private
 
-    def user_from_remember_token
-      remember_token = cookies[:remember_token]
-      User.find_by_remember_token(remember_token) unless remember_token.nil?
-    end
+  def user_from_remember_token
+    remember_token = cookies[:remember_token]
+    User.find_by_remember_token(remember_token) unless remember_token.nil?
+  end
 
-    def clear_return_to
-      session.delete(:return_to)
-    end
+  def clear_return_to
+    session.delete(:return_to)
+  end
 
 end

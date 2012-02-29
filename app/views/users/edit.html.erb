@@ -2,7 +2,7 @@
 <h1>Edit user</h1>
 
 <%= form_for(@user) do |f| %>
-  <%= render 'shared/error_messages' %>
+<%= render 'shared/error_messages', object: f.object %>
   <div class="field">
     <%= f.label :name %><br />
     <%= f.text_field :name %>
@@ -26,5 +26,6 @@
 
 <div>
   <%= gravatar_for(@user) %>
-  <a href="http://gravatar.com/emails">change</a>
+  <%=  link_to "change", "http://gravatar.com/emails", :target => "_blank" %>
+  <%#*<a href="http://gravatar.com/emails">change</a>%>
 </div>
